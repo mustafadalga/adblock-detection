@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detect Adblock Script</title>
+</head>
+<body>
+  
+<script>
+  async function hasAdBlock(){
+    const url="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    const config={
+        method: 'HEAD',
+        mode: 'no-cors',
+      }
+    const request = new Request(url, config);
+    try {
+    const response=await fetch(request);
+    return false
+    } catch (error) {
+      return true;
+    }
+  }
+  async function checkAdBlocker(){
+    const isBlocked=await hasAdBlock();
+    if(isBlocked){
+      alert("Ad blocker is used.")
+      console.log("Ad blocker is used.")
+    }else{
+      alert("Ad blocker is not used".)
+
+      console.log("Ad blocker is not used.")
+    }
+ } 
+  checkAdBlocker();
+  </script>
+</body>
+</html>
