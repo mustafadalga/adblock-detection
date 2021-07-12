@@ -1,3 +1,3 @@
 ### Adblock Detection Script
 
-* Demo:https://mustafadalga.github.io/detect-adblocker-script/
+* Demo:https://mustafadalga.github.io/adblock-detection/
