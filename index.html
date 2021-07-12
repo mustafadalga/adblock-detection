@@ -1,39 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Detect Adblocker Script</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detect Adblocker Script</title>
 </head>
+
 <body>
-  
-<script>
-  async function hasAdBlock(){
-    const url="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
-    const config={
-        method: 'HEAD',
-        mode: 'no-cors',
-      }
-    const request = new Request(url, config);
-    try {
-    const response=await fetch(request);
-    return false
-    } catch (error) {
-      return true;
-    }
-  }
-  async function checkAdBlocker(){
-    const isBlocked=await hasAdBlock();
-    if(isBlocked){
-      alert("Ad blocker is used.")
-      console.log("Ad blocker is used.")
-    }else{
-      alert("Ad blocker is not used")
-      console.log("Ad blocker is not used.")
-    }
- } 
-  checkAdBlocker();
-  </script>
+
+    <script>
+        checkAdblock()
+
+        async function checkAdblock() {
+            this.appendIframeAds();
+            let isBlocked = await this.hasAdblockByIframe();
+            if (!isBlocked) {
+                isBlocked = await this.hasAdblockByScript();
+            }
+
+            if (isBlocked) {
+                alert("Ad blocker is used.")
+                console.log("Ad blocker is used.")
+            } else {
+                alert("Ad blocker is not used")
+                console.log("Ad blocker is not used.")
+            }
+        }
+
+        async function hasAdblockByScript() {
+            let status = false;
+            let url = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+            const config = {
+                method: 'HEAD',
+                mode: 'no-cors',
+            }
+            let request = new Request(url, config);
+            try {
+                await fetch(request);
+                status = false
+            } catch (error) {
+                status = true;
+            }
+
+            if (status) return status;
+
+
+            url = 'https://adblockanalytics.com'
+            request = new Request(url, config);
+            try {
+                await fetch(request);
+                status = false;
+            } catch (error) {
+                status = true
+            }
+            return status;
+        }
+
+        function hasAdblockByIframe() {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    let status = false;
+                    const iframe = document.getElementById("ads-text-iframe");
+                    if (iframe.style.display == "none" ||
+                        iframe.style.display == "hidden" ||
+                        iframe.style.visibility == "hidden" ||
+                        iframe.offsetHeight == 0) {
+                        status = true;
+                    }
+                    iframe.remove();
+                    resolve(status);
+                }, 100)
+            })
+        }
+
+        function appendIframeAds() {
+            const iframe = document.createElement("iframe");
+            iframe.height = "1px";
+            iframe.width = "1px";
+            iframe.id = "ads-text-iframe";
+            iframe.src = "https://domain.com/ads.html";
+            document.body.appendChild(iframe);
+        }
+    </script>
 </body>
+
 </html>
